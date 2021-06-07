@@ -1,0 +1,290 @@
+<html>
+<head>
+<script type="text/javascript"
+        src="https://op1static.oktacdn.com/assets/js/sdk/okta-signin-widget/5.6.2/js/okta-sign-in.min.js"></script>
+<link rel="stylesheet"
+      type="text/css"
+      href="https://op1static.oktacdn.com/assets/js/sdk/okta-signin-widget/5.6.2/css/okta-sign-in.min.css">
+  
+ <!--  <script src="https://op1static.oktacdn.com/assets/js/sdk/okta-auth-js/2.0.1/okta-auth-js.min.js" type="text/javascript">--> 
+
+<!-- Theme file: Customize or replace this file if you want to override our default styles -->
+<!-- <link
+  href="https://global.oktacdn.com/okta-signin-widget/3.1.0/css/okta-sign-in.min.css"
+  type="text/css"
+  rel="stylesheet"/> 
+  
+  <link
+  href="/resources/overwrite.css"
+  type="text/css"
+  rel="stylesheet"/> 
+  -->
+  
+<title>Okta PlayGround!!!</title>
+
+</head>
+<body>
+   <div id="widget-container"></div>
+
+<style>
+table{
+    table-layout: fixed;
+}
+td{
+    word-wrap:break-word
+}
+
+</style>
+
+
+
+<div class="container" id="tokenDiv">
+<div>Welcome <b><span id="name"></span></b></div>
+<div>Click <a href="https://sso.sivajiokta.com"> here </a> to go to Okta dashboard.</b></div>
+<div>Click <a href ="https://sso.sivajiokta.com/login/signout?fromURI=https://sivajiokta.glitch.me/authcode.html">HERE </a>to Logout</b></div>
+
+
+<table border=1 style='table-layout:fixed'>
+
+	<caption>Your Token details are </caption>
+	<thead>
+		<tr>
+			<th>Access Token</th>
+			<th>Id token</th>
+		</tr>
+	</thead>
+	<tbody>		
+ 		<tr>
+			<td style="max-width:500px;"> <span id="accessToken"></span></td>
+			<td style="max-width:500px;"><span id="idToken"></span></td>
+
+		</tr>
+	</tbody>
+</table>
+</div>
+
+<!--
+<script src="webjars/jquery/1.9.1/jquery.min.js"></script>
+<script src="webjars/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+-->
+
+
+<script>
+
+//var message="empty";
+
+
+
+var config = {
+			baseUrl: 'https://sso.sivajiokta.com',
+		 
+		  username: 'Sivaji.Sabbineni',
+		  authScheme: 'OAUTH2',
+		  helpSupportNumber: '000 000 0000',
+		 // clientId: "0oarxdscw7tNK4Pv30h7",
+		 clientId: "0oac4byj76I6uFIxR0h7",
+		 
+		 // redirectUri: "http://localhost:8080/sales_home",
+		 redirectUri: "https://sivajiokta.glitch.me/authcode.html",
+		  brandName: 'Sivaji Inc.',
+		  authParams: {
+			    //issuer: 'https://sso.cloudiamokta.com/oauth2/ausfmywep0Mg1RhMD0h7',
+			  //  authorizeUrl: 'https://sso.cloudiamokta.com/oauth2/ausfmywep0Mg1RhMD0h7/v1/authorize',
+              issuer: 'https://sso.sivajiokta.com/oauth2/ausc81hx0vUXt3zMm0h7',
+			    authorizeUrl: 'https://sso.sivajiokta.com/oauth2/ausc81hx0vUXt3zMm0h7/v1/authorize',
+			   responseType: 'code',
+			   //responseMode: 'form_post',
+              responseMode: 'query',
+			   	//pkce: true,
+          pkce: false,
+			    display: 'page',
+			    scopes: ['openid','profile']	
+			    
+		  },
+		 
+		  features: {
+	          // Used to enable registration feature on the widget.
+	          // https://github.com/okta/okta-signin-widget#feature-flags
+	          // registration: true,
+	           rememberMe : true,
+	           smsRecovery: true,
+	           callRecovery : true,
+	           selfServiceUnlock : true,
+	           showPasswordToggleOnSignInPage: true
+	          
+	          // idpDiscovery: true// REQUIRED
+            
+              
+	        },
+        //idpDiscovery:{
+        //       requestContext: 'https://sivajiokta.glitch.me/authcode.html'
+          //    },
+	       
+			customButtons: [{
+				  title: 'Click Me for assistance',
+				  className: 'btn-customAuth',
+				  click: function() {
+				    // clicking on the button navigates to another page
+				    window.location.href = 'http://www.google.com';
+				  }
+				}]
+		    
+		};
+
+
+//var signIn = new OktaSignIn(config);
+
+
+function widgetSuccessCallback(res) {
+//Not used in case of OIDC flow.
+
+console.log("am here");
+  signInWidget.authClient.session.exists()
+	.then(function(exists) {
+	  if (exists) {
+		  
+		  console.log("session exist... continue");
+		displayTokens();
+
+	  } 
+	});
+}
+
+function widgetErrorCallback (err) {
+	//Not used in case of OIDC flow
+	console.log("Widget Error...");
+}
+  
+  
+  
+console.log("Init124...");
+var signInWidget = new OktaSignIn(config);
+console.log("Init...");
+displayTokens();
+  
+var tokens ;
+  function displayTokens() {
+    signInWidget.authClient.session.exists()
+	.then(function(exists) {
+	  if (exists) {
+		  
+		  console.log("session exist...");
+		 
+      console.log("calling Tokens1: ");
+      
+      signInWidget.authClient.tokenManager.getTokens()
+      .then(({ accessToken, idToken }) => {
+        // handle accessToken and idToken
+        console.log("accessToken: "+accessToken);
+        console.log(accessToken);
+        console.log("idToken: "+idToken);
+        console.log(idToken);
+        console.log( 'Defined? '+(typeof accessToken === 'undefined') );
+        if( (typeof accessToken === 'undefined')  ) {
+            
+            console.log("Don't Have Tokens");
+            signInWidget.authClient.token.getWithoutPrompt().then(function(res) {
+            console.log("in side signInWidget.authClient.token.getWithoutPrompt().");
+             tokens = res.tokens;
+            console.log("signInWidget.authClient.token.getWithoutPrompt() res ");
+            console.log(res);
+            console.log("csignInWidget.authClient.token.getWithoutPrompt() tokens: ");
+            console.log(tokens);
+            console.log("Hiding Widget");
+            signInWidget.hide();
+
+            showstuff("tokenDiv");
+            showstuff("name");
+            showstuff("accessToken");
+            showstuff("idToken");
+
+            document.getElementById("accessToken").innerHTML = tokens.accessToken.value;
+            document.getElementById("idToken").innerHTML = tokens.idToken.value;
+            // Do something with tokens, such as
+            signInWidget.authClient.tokenManager.setTokens(tokens);
+          })
+          .catch(function(err) {
+            console.log("error");
+            console.log(err);
+            // handle OAuthError or AuthSdkError (AuthSdkError will be thrown if app is in OAuthCallback state)
+          });
+          
+        } else {
+          
+          console.log("Have Tokens");
+          document.getElementById("accessToken").innerHTML = accessToken.value;//accessToken.value;
+          document.getElementById("idToken").innerHTML = idToken.value;
+          
+          
+        }
+      });
+      
+      /*
+        signInWidget.authClient.token.getWithoutPrompt().then(function(res) {
+          console.log("in side signInWidget.authClient.token.getWithoutPrompt().");
+           tokens = res.tokens;
+          console.log("signInWidget.authClient.token.getWithoutPrompt() res ");
+          console.log(res);
+          console.log("csignInWidget.authClient.token.getWithoutPrompt() tokens: ");
+          console.log(tokens);
+          console.log("Hiding Widget");
+          signInWidget.hide();
+
+          showstuff("tokenDiv");
+          showstuff("name");
+          showstuff("accessToken");
+          showstuff("idToken");
+
+          document.getElementById("accessToken").innerHTML = tokens.accessToken.value;
+          document.getElementById("idToken").innerHTML = tokens.idToken.value;
+          // Do something with tokens, such as
+          signInWidget.authClient.tokenManager.setTokens(tokens);
+        })
+        .catch(function(err) {
+          console.log("error");
+          console.log(err);
+          // handle OAuthError or AuthSdkError (AuthSdkError will be thrown if app is in OAuthCallback state)
+        });
+    */
+          
+
+	  } else {
+		  console.log("session does not exist...");
+			
+			    hidestuff("tokenDiv");
+		      hidestuff("name");
+		      hidestuff("accessToken");
+		      hidestuff("idToken");
+		      signInWidget.authClient.tokenManager.clear();
+		     
+		      // No session, show the login form
+		      		  console.log("render widget...");
+		      signInWidget.renderEl(
+		        { el: '#widget-container' },widgetSuccessCallback, widgetErrorCallback);
+	  }
+	});
+    
+  }
+	
+	
+	
+
+
+	
+
+function hidestuff(boxid){
+	   //document.getElementById(boxid).style.visibility="hidden";
+	  document.getElementById(boxid).style.display="none";
+	}
+  
+function showstuff(boxid){
+	   //document.getElementById(boxid).style.visibility="hidden";
+	  document.getElementById(boxid).style.display="block";
+	}
+
+
+</script>
+
+
+</body>
+</html>
